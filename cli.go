@@ -84,3 +84,26 @@ func (cli *CLI) Run() {
 		cli.printChain()
 	}
 }
+
+func (cli *CLI) send(from, to string, amount int) {
+	bc := NewBlockChain(from)
+	defer bc.db.Close()
+
+	tx := NewUTXOTransaction(from, to, amount, bc)
+	bc.MineBlock([]*Transaction{tx})
+	fmt.Print("sucess")
+}
+
+func (cli *CLI) createWallet() {
+	wallets, _ := NewWallets()
+	address := wallets.CreateWallet()
+	wallets.SaveToFile()
+
+	fmt.Printf("Your new address: %s\n", address)
+}
+
+func (cli *CLI) createBlockchain(address string) {
+	if !ValidateAddress(address) {
+		log.Panic("Error: Address is not valid")
+	}
+}
